@@ -15,11 +15,9 @@ public class DestroyCube : MonoBehaviour
         
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject == cube)
-        {
-            Destroy(cube);
-        }
+        if (other.gameObject == cube)
+            Destroy(other.gameObject);
     }
 }
