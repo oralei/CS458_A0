@@ -2,8 +2,13 @@ using UnityEngine;
 
 public class DestroyCube : MonoBehaviour
 {
-    public GameObject cube;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Renderer renderer;
+
+    private void Awake()
+    {
+        renderer = GetComponent<Renderer>();
+    }
+
     void Start()
     {
         
@@ -17,7 +22,8 @@ public class DestroyCube : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == cube)
+        Renderer otherRenderer = other.GetComponent<Renderer>();
+        if (renderer.sharedMaterial == otherRenderer.sharedMaterial)
             Destroy(other.gameObject);
     }
 }
