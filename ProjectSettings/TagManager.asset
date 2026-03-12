@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Camera0
+  - Saber
+  - button
   layers:
   - Default
   - TransparentFX
