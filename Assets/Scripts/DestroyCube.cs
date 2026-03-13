@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class DestroyCube : MonoBehaviour
 {
@@ -33,6 +34,10 @@ public class DestroyCube : MonoBehaviour
         {
             Instantiate(hitSoundObj, other.transform.position, transform.rotation);
             Destroy(other.gameObject);
+
+            // Change Score
+            GameManager.instance.blockScore++;
+            GameManager.instance.scoreText.text = "Score: " + GameManager.instance.blockScore;
         }
 
     }
