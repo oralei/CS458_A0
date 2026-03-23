@@ -34,4 +34,9 @@ public class SceneChangeCube : MonoBehaviour
     {
         SceneManager.LoadScene("Level2");
     }
+
+    public void ChangeLevelA4()
+    {
+        SceneManager.LoadScene("A4_Scene");
+    }
 }
