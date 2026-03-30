@@ -6,64 +6,69 @@ public class GrabObject : MonoBehaviour
 {
     InputDevice rightController;
     private Vector3 grabOffset;
+
     private GameObject grabbedObject = null;
+    private GameObject objectInRange = null;
 
-    private bool gripLastFrame = false;
+    private bool gripped = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // only right
         rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // B button
+        // grip button because CommonUsages.gripButton
         rightController.TryGetFeatureValue(CommonUsages.gripButton, out bool gripPressed);
 
-        if (gripPressed && !gripLastFrame)
-            TryGrab();
-        else if (!gripPressed && gripLastFrame)
+        if (gripPressed && !gripped)
+            TestGrab();
+        else if (!gripPressed && gripped)
             Release();
 
         if (grabbedObject != null)
             grabbedObject.transform.position = transform.position + grabOffset;
 
-        gripLastFrame = gripPressed;
+        gripped = gripPressed;
     }
 
-    void TryGrab()
+    void OnTriggerEnter(Collider other)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, 0.1f);
-        foreach (var hit in hits)
+        if (other.CompareTag("grabbable"))
         {
-            if (hit.CompareTag("grabbable"))
-            {
-                grabbedObject = hit.gameObject;
-                grabbedObject.GetComponent<Rigidbody>().isKinematic = true;
-                grabOffset = grabbedObject.transform.position - transform.position;
-                Debug.Log("Grabbed: " + grabbedObject.name);
-                break;
-            }
+            objectInRange = other.gameObject;
+            Debug.Log("theres a grabbable object here");
         }
+    }
+
+    void TestGrab()
+    {
+        if (objectInRange == null) 
+            return;
+
+        grabbedObject = grabObject;
+        grabbedObject.GetComponent<Rigidbody>().isKinematic = true;
+        grabOffset = grabbedObject.transform.position - transform.position;
     }
 
     void Release()
     {
-        if (grabbedObject == null) return;
+        if (grabbedObject == null) 
+            return;
 
         Rigidbody rb = grabbedObject.GetComponent<Rigidbody>();
         rb.isKinematic = false;
 
-        // XR velocity
+        // takes controller velocity
         rightController.TryGetFeatureValue(CommonUsages.deviceVelocity, out Vector3 velocity);
         rightController.TryGetFeatureValue(CommonUsages.deviceAngularVelocity, out Vector3 angularVelocity);
 
+        // applies controlelr velocity to rb which is the object
         rb.linearVelocity = velocity;
         rb.angularVelocity = angularVelocity;
 
-        Debug.Log("Released with velocity: " + velocity);
         grabbedObject = null;
     }
 }
